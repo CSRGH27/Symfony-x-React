@@ -17,6 +17,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ApiResource
  * @UniqueEntity("email", message="Email adress already exist")
+ * @ApiResource(
+ *  normalizationContext={"groups"={"users_read"}},
+ * )
  */
 class User implements UserInterface
 {
@@ -24,13 +27,13 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"customers_read"})
+     * @Groups({"customers_read", "users_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"customers_read", "invoices_subresource"})
+     * @Groups({"customers_read", "invoices_subresource", "users_read"})
      * @Assert\NotBlank(message="Email is required")
      * @Assert\Email(
      *     message = "The email '{{ value }}' is not a valid email."
@@ -40,7 +43,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="json")
-     * @Groups({"customers_read"})
+     * @Groups({"customers_read", "users_read"})
      */
     private $roles = [];
 
@@ -53,7 +56,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"customers_read", "invoices_subresource"})
+     * @Groups({"customers_read", "invoices_subresource", "users_read"})
      * @Assert\NotBlank(message="First name is required")
      * @Assert\Length(min=3, minMessage="The first name must be at least 3 characters long",
      *                max=255, maxMessage="The first name must be between 3 and 255 characters long." )
@@ -62,7 +65,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"customers_read", "invoices_subresource"})
+     * @Groups({"customers_read", "invoices_subresource", "users_read"})
      * @Assert\NotBlank(message="Last name is required")
      * @Assert\Length(min=3, minMessage="The last name must be at least 3 characters long",
      *                max=255, maxMessage="The last name must be between 3 and 255 characters long." )
