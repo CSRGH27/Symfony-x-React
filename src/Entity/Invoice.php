@@ -51,8 +51,6 @@ class Invoice
     /**
      * @ORM\Column(type="datetime")
      * @Groups({"invoices_read", "customers_read", "invoices_subresource"})
-     * @Assert\Type("\DateTimeInterface", message="The sending date must be in the format YYYY/MM/DD")
-     * @Assert\NotBlank(message="The sending date is required")
      * 
      */
     private $sentAt;
@@ -77,8 +75,6 @@ class Invoice
     /**
      * @ORM\Column(type="integer")
      * @Groups({"invoices_read", "customers_read", "invoices_subresource"})
-     * @Assert\NotBlank(message="The chrono is required")
-     * Assert\Type(type="integer", message="The amount of the chrono must be a number")
      */
     private $chrono;
 
