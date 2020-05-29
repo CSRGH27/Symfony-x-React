@@ -29,11 +29,7 @@ class InvoiceDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        if ($context['collection_operation_name'] === "post") {
-            return $data instanceof Invoice;
-        } else {
-            return false;
-        }
+        return $data instanceof Invoice;
     }
 
     public function persist($data, array $context = [])
@@ -53,5 +49,7 @@ class InvoiceDataPersister implements ContextAwareDataPersisterInterface
 
     public function remove($data, array $context = [])
     {
+        $this->em->remove($data);
+        $this->em->flush();
     }
 }

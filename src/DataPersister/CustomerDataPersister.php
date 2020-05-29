@@ -21,11 +21,7 @@ class CustomerDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        if ($context['collection_operation_name'] === "post") {
-            return $data instanceof Customer;
-        } else {
-            return false;
-        }
+        return $data instanceof Customer;
     }
 
     public function persist($data, array $context = [])
@@ -40,5 +36,7 @@ class CustomerDataPersister implements ContextAwareDataPersisterInterface
 
     public function remove($data, array $context = [])
     {
+        $this->em->remove($data);
+        $this->em->flush();
     }
 }

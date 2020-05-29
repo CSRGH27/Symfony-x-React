@@ -21,6 +21,7 @@ import Navbar from "./components/Navbar";
 import Homepage from "./pages/HomePage";
 import { HashRouter, Switch, Route } from "react-router-dom";
 import CustomersPage from "./pages/CustomersPage";
+import CustomerPageWithPagination from "./pages/CustomersPageWithPagination";
 
 const App = () => {
   return (
@@ -29,6 +30,10 @@ const App = () => {
       <main className="container pt-5">
         <Switch>
           <Route path="/customers" component={CustomersPage} />
+          <Route
+            path="/customers-pagination"
+            component={CustomerPageWithPagination}
+          />
           <Route path="/" component={Homepage} />
         </Switch>
       </main>

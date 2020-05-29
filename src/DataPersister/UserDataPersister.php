@@ -24,11 +24,7 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        if ($context['collection_operation_name'] === "post") {
-            return $data instanceof User;
-        } else {
-            return false;
-        }
+        return $data instanceof User;
     }
 
     public function persist($data, array $context = [])
@@ -44,5 +40,7 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
 
     public function remove($data, array $context = [])
     {
+        $this->em->remove($data);
+        $this->em->flush();
     }
 }

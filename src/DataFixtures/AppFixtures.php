@@ -24,12 +24,12 @@ class AppFixtures extends Fixture
     {
         $this->encoder = $encoder;
     }
-            
+
     public function load(ObjectManager $manager)
     {
         $faker = Factory::create('fr_FR');
 
-        for ($u = 0; $u < 10; $u++) {
+        for ($u = 0; $u < 40; $u++) {
             $user = new User;
             $chrono = 1;
             $hash = $this->encoder->encodePassword($user, "password");

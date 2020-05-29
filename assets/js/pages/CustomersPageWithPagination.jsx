@@ -2,17 +2,22 @@ import React, { Fragment, useEffect, useState } from "react";
 import Axios from "axios";
 import Pagination from "../components/Pagination";
 
-const CustomersPage = (props) => {
+const CustomerPageWithPagination = (props) => {
   const [customers, setCustomers] = useState([]);
+  const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const itemsPerPage = 15;
 
   useEffect(() => {
-    Axios.get("https://127.0.0.1:8000/api/customers")
-      .then((response) => response.data["hydra:member"])
-      .then((data) => setCustomers(data))
+    Axios.get(
+      `https://127.0.0.1:8000/api/customers?pagination=true&count=${itemsPerPage}&page=${currentPage}`
+    )
+      .then((response) => {
+        setCustomers(response.data["hydra:member"]);
+        setTotalItems(response.data["hydra:totalItems"]);
+      })
       .catch((error) => console.log(error.response));
-  }, []);
+  }, [currentPage]);
 
   /**
    * Dans cette function on supprime en premier le customer dans le state customers qui permet davoir une suppreson visue rapoide pour le user
@@ -41,49 +46,17 @@ const CustomersPage = (props) => {
   };
 
   const handlePageChange = (page) => {
+    setCustomers([]);
     setCurrentPage(page);
   };
-
-  const handleSearch = (event) => {
-    const value = event.currentTarget.value;
-    setSearch(value);
-    setCurrentPage(1);
-  };
-
-  /**
-   * Ici on filtre la recherche, on filtre le tableau en voulant les nom et premom des customer  et on inclue juste ceux egale a notre sate search
-   */
-  const itemsPerPage = 15;
-  const filteredCustomers = customers.filter(
-    (customer) =>
-      customer.firstname.toLowerCase().includes(search.toLowerCase()) ||
-      customer.lastname.toLowerCase().includes(search.toLowerCase()) ||
-      customer.email.toLowerCase().includes(search.toLowerCase()) ||
-      customer.company.toLowerCase().includes(search.toLowerCase())
-  );
 
   /**
    * On va chercher la methode getData de Pagination pour recuperer les customers pagine
    */
-  const paginatedCustomers = Pagination.getData(
-    filteredCustomers,
-    currentPage,
-    itemsPerPage
-  );
 
   return (
     <Fragment>
-      <h1>List of customer</h1>
-
-      <div className="form-group">
-        <input
-          type="text"
-          onChange={handleSearch}
-          value={search}
-          className="form-control"
-          placeholder="Search ..."
-        />
-      </div>
+      <h1>List of customer (pagination with api)</h1>
 
       <table className="table table-hover">
         <thead>
@@ -99,7 +72,12 @@ const CustomersPage = (props) => {
         </thead>
 
         <tbody>
-          {paginatedCustomers.map((customer) => (
+          {customers.length === 0 && (
+            <tr>
+              <td>Loading ...</td>
+            </tr>
+          )}
+          {customers.map((customer) => (
             <tr key={customer.id}>
               <td>{customer.id}</td>
               <td>
@@ -142,11 +120,11 @@ const CustomersPage = (props) => {
       <Pagination
         currentPage={currentPage}
         itemsPerPage={itemsPerPage}
-        length={filteredCustomers.length}
+        length={totalItems}
         onPageChange={handlePageChange}
       />
     </Fragment>
   );
 };
 
-export default CustomersPage;
+export default CustomerPageWithPagination;
