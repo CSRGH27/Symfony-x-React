@@ -1,26 +1,40 @@
 import React, { Fragment, useEffect, useState } from "react";
-import Axios from "axios";
 import Pagination from "../components/Pagination";
+import customersAPI from "../services/customersAPI";
 
 const CustomersPage = (props) => {
   const [customers, setCustomers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
 
+  /**
+   * Permet d'aller chercher les customer
+   */
+  const fetchCustomers = async () => {
+    try {
+      const data = await customersAPI.findAll();
+      setCustomers(data);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  /**
+   * Au chargement on appelle la function fetchCustomers
+   */
   useEffect(() => {
-    Axios.get("https://127.0.0.1:8000/api/customers")
-      .then((response) => response.data["hydra:member"])
-      .then((data) => setCustomers(data))
-      .catch((error) => console.log(error.response));
+    fetchCustomers();
   }, []);
 
   /**
+   * GESTION DE LA SUPPRESIION DES CUSTOMERS
+   *
    * Dans cette function on supprime en premier le customer dans le state customers qui permet davoir une suppreson visue rapoide pour le user
    * ensuite on envoie nottre requette http pour supprimer sur le serveur, si cela ne marche pas on reajoute le customer quon a supprime visuelement
    * grace a la const originalCustomer
    * @param {*} id
    */
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     /**
      * les trois dot permet diterer sur un tableau et de sortir chaque elements
      */
@@ -29,24 +43,29 @@ const CustomersPage = (props) => {
      * La methode filter va retourner les elements d'un tableau qui corresponde a la condition (Ici les elemts qui ont un id differrent de l'id qu'on supprime)
      */
     setCustomers(customers.filter((customer) => customer.id !== id));
-
-    Axios.delete("https://127.0.0.1:8000/api/customers/" + id)
-      .then((response) => {
-        alert("Customer deleted");
-      })
-      .catch((error) => {
-        setCustomers(originalCustomer);
-        console.log(error.response);
-      });
+    try {
+      await customersAPI.delete(id);
+    } catch (error) {
+      setCustomers(originalCustomer);
+      console.log(error.response);
+    }
   };
 
+  /**
+   * Gestion du changement de page
+   * @param {*} page
+   */
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  const handleSearch = (event) => {
-    const value = event.currentTarget.value;
-    setSearch(value);
+  /**
+   * Gestion de la recherche
+   *
+   * @param {*} event
+   */
+  const handleSearch = (currentTarget) => {
+    setSearch(currentTarget.value);
     setCurrentPage(1);
   };
 

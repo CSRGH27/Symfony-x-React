@@ -32,12 +32,12 @@ const Navbar = (props) => {
           </li>
         </ul>
         <ul className="navbar-nav ml-auto">
-          <li className="nav-item">
+          <li className="nav-item mr-1">
             <a href="#" className="nav-link">
               Registration
             </a>
           </li>
-          <li className="nav-item">
+          <li className="nav-item mr-1">
             <a href="#" className="btn btn-primary">
               Login
             </a>
